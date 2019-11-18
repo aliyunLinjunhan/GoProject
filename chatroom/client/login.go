@@ -12,7 +12,7 @@ func login(userId int, userPwd string) (err error) {
 
 	// 下一个就要开始定协议
 	// 1. 链接到服务器
-	conn, err := net.Dail("tcp", "localhost:8889")
+	conn, err := net.Dial("tcp", "localhost:8889")
 	if err != nil {
 		fmt.Println("net dial err ", err)
 		return 
@@ -26,10 +26,10 @@ func login(userId int, userPwd string) (err error) {
 	// 3.创建了一个LoginMes 结构体
 	var loginMes message.LoginMes
 	loginMes.UserId = userId
-	login.UserPwd = userPwd
+	loginMes.UserPwd = userPwd
 
 	// 4.将loginMes 序列化
-	data, err := json.Marshall(loginMes)
+	data, err := json.Marshal(loginMes)
 	if err != nil {
 		fmt.Println("json marshal err ", err)
 		return
@@ -39,7 +39,7 @@ func login(userId int, userPwd string) (err error) {
 	mes.Data = string(data)
 
 	// 6.将mes进行序列化
-	data, err = json.Marshall(mes)
+	data, err = json.Marshal(mes)
 	if err != nil {
 		fmt.Println("mes json marshall err ", err)
 		return
@@ -60,4 +60,5 @@ func login(userId int, userPwd string) (err error) {
 	}
 
 	fmt.Printf("客户端发送消息的长度 %d, 内容 %s", len(data), string(data))
+	return 
 }
