@@ -58,7 +58,17 @@ func login(userId int, userPwd string) (err error) {
 		fmt.Println("conn write(len) err ", err)
 		return 
 	}
-
 	fmt.Printf("客户端发送消息的长度 %d, 内容 %s", len(data), string(data))
+
+	// 发送消息本身
+	_, err = conn.Write(data)
+	if err != nil {
+		fmt.Println("conn write(content) err ", err)
+		return 
+	}
+
+	// 这里需要处理服务器的反馈信息
+	
+
 	return 
 }
