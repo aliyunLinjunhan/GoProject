@@ -49,12 +49,12 @@ func main() {
 		fmt.Println("请输入您的密码")
 		fmt.Scanf("%s\n", &UserPassword)
 		// 使用登陆函数
-		err := login(UserId, UserPassword)
-		if err != nil {
-			fmt.Println("登陆失败")
-		}else{
-			fmt.Println("登陆成功")
-		}
+		_ = login(UserId, UserPassword)
+		// if err != nil {
+		// 	fmt.Println("登陆失败")
+		// }else{
+		// 	fmt.Println("登陆成功")
+		// }
 	}else{
 
 	}

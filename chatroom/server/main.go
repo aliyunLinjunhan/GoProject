@@ -10,6 +10,69 @@ import (
 	"io"
 )
 
+// 编写一个ServerProcessLogin函数，专门处理登陆请求
+func serverProcessLogin(conn net.Conn, mes *message.Message) (err error) {
+
+	// 1. 先从mes中取出mes.Data，并直接反序列化LoginMes
+	var loginMes message.LoginMes
+	err = json.Unmarshal([]byte(mes.Data), &loginMes)
+	if err != nil {
+		fmt.Println("json umarshal fail err ", err)
+		return
+	}
+
+	//1.先声明一个resMes
+	var resMes message.Message
+	resMes.Type = message.LoginResMesType
+
+	//2.再声明一个 LoginResMes 
+	var LoginResMes message.LoginResMes
+
+
+	// 如果用户id=100，密码=123456， 认为合法， 否则不合法
+	if loginMes.UserId == 100 && loginMes.UserPwd == "123456" {
+		// 合法
+		LoginResMes.Code = 200
+	}else{
+		// 不合法
+		LoginResMes.Code = 500
+		LoginResMes.Error = "该用户不存在，请确认账号密码是否正确！！"
+	}
+
+	//3.将loginResMes序列化
+	data, err := json.Marshal(LoginResMes)
+	if err != nil {
+		fmt.Println("json.Marshal fail ", err)
+		return
+	}
+
+	//4. 将data赋值给resMes
+	resMes.Data = string(data)
+
+	//5. 对resMes进行序列化，准备发送
+	data, err = json.Marshal(resMes)
+
+	//6. 发送包(进行封装)
+	err = writeRkg(conn, data)
+	return 
+
+}
+
+// 编写ServerProcessMes 函数根据不同的消息种类，决定调用那个函数
+func ServerProcessMes(conn net.Conn, mes *message.Message) (err error) {
+
+	switch mes.Type {
+		case message.LoginMesType:
+			// 处理登陆逻辑
+			err = serverProcessLogin(conn, mes)
+		case message.RegisterMesType:
+			//
+		default: 
+			fmt.Println("消息类型不存在.......................")
+	}
+	return
+}
+
 // 处理和客户端的通讯
 func process(conn net.Conn) {
 	// 先延时关闭
@@ -29,7 +92,11 @@ func process(conn net.Conn) {
 				return
 			}
 		}
-		fmt.Println("mes=", mes)
+		// fmt.Println("mes=", mes)
+		err = ServerProcessMes(conn, &mes)
+		if err != nil {
+			return
+		}
 
 	}
 }
@@ -63,8 +130,30 @@ func readPkg(conn net.Conn) (mes message.Message, err error) {
 	}
 
 	return 
-	
+}
 
+func writeRkg(conn net.Conn, data []byte) (err error) {
+
+	// 先发送一个包的长度，发给对方
+	var pkgLen uint32
+	pkgLen = uint32(len(data))
+	var buf [4]byte
+	binary.BigEndian.PutUint32(buf[0:4], pkgLen)
+	// 发送长度
+	n, err := conn.Write(buf[:4])
+	if n != 4 || err != nil {
+		fmt.Println("conn write(len) err ", err)
+		return 
+	}
+	fmt.Printf("客户端发送消息的长度 %d, 内容 %s", len(data), string(data))
+
+	// 发送消息本身
+	n, err = conn.Write(data)
+	if err != nil || n != int(pkgLen) {
+		fmt.Println("conn write(content) err ", err)
+		return 
+	}
+	return 
 }
 
 func main() {
