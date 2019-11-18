@@ -42,6 +42,7 @@ func main() {
 	}
 
 	// 根据用户的输入，显示新的提示信息
+
 	if key == 1{
 		//说明用户要登陆
 		fmt.Println("请输入您的ID")
@@ -49,7 +50,7 @@ func main() {
 		fmt.Println("请输入您的密码")
 		fmt.Scanf("%s\n", &UserPassword)
 		// 使用登陆函数
-		_ = login(UserId, UserPassword)
+		login(UserId, UserPassword)
 		// if err != nil {
 		// 	fmt.Println("登陆失败")
 		// }else{
