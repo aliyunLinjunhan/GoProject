@@ -3,7 +3,6 @@ import (
 	"fmt"
 	"encoding/json"
 	"net"
-	"encoding/binary"
 	"go_project/chatroom/common/message"
 )
 
@@ -46,26 +45,7 @@ func login(userId int, userPwd string) (err error) {
 	}
 
 	// 7. 已经拿到了要送的data
-	// 7.1 先把data长度发送给服务器
-	// 先获取data的长度 -》 转成一个表示长度的bytes的切片
-	var pkgLen uint32
-	pkgLen = uint32(len(data))
-	var buf [4]byte
-	binary.BigEndian.PutUint32(buf[0:4], pkgLen)
-	// 发送长度
-	n, err := conn.Write(buf[:4])
-	if n != 4 || err != nil {
-		fmt.Println("conn write(len) err ", err)
-		return 
-	}
-	fmt.Printf("客户端发送消息的长度 %d, 内容 %s", len(data), string(data))
-
-	// 发送消息本身
-	_, err = conn.Write(data)
-	if err != nil {
-		fmt.Println("conn write(content) err ", err)
-		return 
-	}
+	writeRkg(conn, data)
 
 	// 这里需要处理服务器的反馈信息
 	mes, err = readPkg(conn)	// mes 就是

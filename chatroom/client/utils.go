@@ -40,6 +40,9 @@ func readPkg(conn net.Conn) (mes message.Message, err error) {
 
 func writeRkg(conn net.Conn, data []byte) (err error) {
 
+	// 7.1 先把data长度发送给服务器
+	// 先获取data的长度 -》 转成一个表示长度的bytes的切片
+
 	// 先发送一个包的长度，发给对方
 	var pkgLen uint32
 	pkgLen = uint32(len(data))
