@@ -1,8 +1,10 @@
 package main
 import (
 	"fmt"
+	"time"
 	_ "errors"
 	"net"
+	"go_project/chatroom/server/model"
 )
 
 
@@ -20,10 +22,20 @@ func process1(conn net.Conn) {
 		fmt.Println("客户端和服务器通讯携程err", err)
 	}
 }
+
+// 编写一个函数完成对UserDao的初始化任务
+func initUserDao(){
+	
+	model.MyUserDao = model.NewUserDao(pool)
+}
 	
 
 func main() {
 	
+	// 初始化redis链接池
+	initPool("localhost:6379", 16, 0, 300 *time.Second)
+	// 先初始化redis链接池，再初始化UserDao
+	initUserDao()
 	// 提示信息
 	fmt.Println("服务器在88889端口监听.........")
 	listen, err := net.Listen("tcp", "0.0.0:8889")
