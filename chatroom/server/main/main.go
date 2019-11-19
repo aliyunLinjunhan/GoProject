@@ -8,6 +8,7 @@ import (
 	"go_project/chatroom/common/message"
 	"net"
 	"io"
+	"go_project/chatroom/server/process"
 )
 
 // // 编写一个ServerProcessLogin函数，专门处理登陆请求
@@ -77,28 +78,37 @@ import (
 func process(conn net.Conn) {
 	// 先延时关闭
 	defer conn.Close()
-	
-	// 循环的客户端发送的消息
-	for {
 
-		// 这里将读取数据包， 直接进行封装
-		mes, err := readPkg(conn)
-		if err != nil {
-			if err == io.EOF {
-				fmt.Println("客户端推出了，服务端也正常退出...")
-				return
-			} else {
-				fmt.Println("readPkg err =", err)
-				return
-			}
-		}
-		// fmt.Println("mes=", mes)
-		err = ServerProcessMes(conn, &mes)
-		if err != nil {
-			return
-		}
-
+	// 调用总控
+	processor := &processor{
+		Conn : conn,
 	}
+	err = process.Process2()
+	if err != nil {
+		fmt.Println("客户端和服务器通讯携程err", err)
+	}
+	
+	// // 循环的客户端发送的消息
+	// for {
+
+	// 	// 这里将读取数据包， 直接进行封装
+	// 	mes, err := readPkg(conn)
+	// 	if err != nil {
+	// 		if err == io.EOF {
+	// 			fmt.Println("客户端推出了，服务端也正常退出...")
+	// 			return
+	// 		} else {
+	// 			fmt.Println("readPkg err =", err)
+	// 			return
+	// 		}
+	// 	}
+	// 	// fmt.Println("mes=", mes)
+	// 	err = ServerProcessMes(conn, &mes)
+	// 	if err != nil {
+	// 		return
+	// 	}
+
+	// }
 }
 
 // func readPkg(conn net.Conn) (mes message.Message, err error) {
