@@ -2,8 +2,8 @@ package main
 import (
 	"net"
 	"go_project/chatroom/common/message"
-	"go_project/chatroom/process/userProcess"
 	"go_project/chatroom/server/utils"
+	"go_project/chatroom/server/process"
 	"fmt"
 	"io"
 )
@@ -19,7 +19,7 @@ func (this *Processor) ServerProcessMes(mes *message.Message) (err error) {
 	switch mes.Type {
 		case message.LoginMesType:
 			// 处理登陆逻辑
-			up := &userProcess{
+			up := &process.UserProcess{
 				Conn : this.Conn,
 			}
 			err = up.ServerProcessLogin(mes)
@@ -39,20 +39,20 @@ func (this *Processor) Process2() (err error){
 		tf := &utils.Transfer{
 			Conn : this.Conn,
 		}
-		mes, err := tf.ReadPkg(conn)
+		mes, err := tf.ReadPkg()
 		if err != nil {
 			if err == io.EOF {
 				fmt.Println("客户端推出了，服务端也正常退出...")
-				return
+				return err
 			} else {
 				fmt.Println("readPkg err =", err)
-				return
+				return err
 			}
 		}
 		// fmt.Println("mes=", mes)
 		err = this.ServerProcessMes(&mes)
 		if err != nil {
-			return
+			return err
 		}
 
 	}
