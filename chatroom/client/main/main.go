@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"go_project/chatroom/client/process"
 )
 
 // 定义俩个变量，一个表示id，一个表示password
@@ -29,6 +30,16 @@ func main() {
 
 			case 1: 
 				fmt.Println("登陆聊天室")
+				//说明用户要登陆
+				fmt.Println("请输入您的ID")
+				fmt.Scanf("%d\n", &UserId)
+				fmt.Println("请输入您的密码")
+				fmt.Scanf("%s\n", &UserPassword)
+				// 使用登陆函数
+				up := &process.UserProcess{
+
+				}
+				up.Login(UserId, UserPassword)
 				loop = false
 			case 2: 
 				fmt.Println("注册用户")
@@ -39,24 +50,5 @@ func main() {
 			default : 
 				fmt.Println("您的输入有误！！！")
 		}
-	}
-
-	// 根据用户的输入，显示新的提示信息
-
-	if key == 1{
-		//说明用户要登陆
-		fmt.Println("请输入您的ID")
-		fmt.Scanf("%d\n", &UserId)
-		fmt.Println("请输入您的密码")
-		fmt.Scanf("%s\n", &UserPassword)
-		// 使用登陆函数
-		login(UserId, UserPassword)
-		// if err != nil {
-		// 	fmt.Println("登陆失败")
-		// }else{
-		// 	fmt.Println("登陆成功")
-		// }
-	}else{
-
 	}
 }
