@@ -61,7 +61,7 @@ func (this *UserProcess) serverProcessLogin(mes *message.Message) (err error) {
 	tf := &utils.Transfer{
 		Conn : this.Conn,
 	}
-	err = tf.WriteRkg(conn, data)
+	err = tf.WriteRkg(data)
 	return 
 
 }
