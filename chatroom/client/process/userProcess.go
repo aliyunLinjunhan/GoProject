@@ -53,7 +53,7 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	}
 
 	// 7. 已经拿到了要送的data
-	tf.WriteRkg(data)
+	_ = tf.WriteRkg(data)
 
 	// 这里需要处理服务器的反馈信息
 	mes, err = tf.ReadPkg()	// mes 就是
@@ -78,4 +78,70 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 	}
 
 	return 
+}
+
+func (this *UserProcess) Register(userId int, userPwd string, userName string) (err error){
+
+	// 1. 链接到服务器
+	conn, err := net.Dial("tcp", "localhost:8889")
+	if err != nil {
+		fmt.Println("register net dial err ", err)
+		return
+	}
+	// 延时关闭
+	defer conn.Close()
+
+	// 2. 准备通过conn发送消息给服务
+	var mes message.Message
+	mes.Type = message.RegisterMesType
+	// 3.创建了一个LoginMes 结构体
+	var registerMes message.RegisterMes
+	registerMes.User.UserId = userId
+	registerMes.User.UserPwd = userPwd
+	registerMes.User.UserName = userName
+
+	// 5.将用户信息进行序列化
+	data, err := json.Marshal(registerMes)
+	if err != nil {
+		fmt.Println("json.Marshal err ", err)
+		return
+	}
+
+	// 6.将用户序列化信息字符串化
+	mes.Data = string(data)
+
+	// 7.将发送信息进行序列化
+	data, err = json.Marshal(mes)
+	if err != nil {
+		fmt.Println("json marshal err ", err)
+		return
+	}
+
+	// 7.创建一个Transfer实例
+	tf := &utils.Transfer{
+		Conn: conn,
+	}
+
+	// 发送数据给服务器
+	err = tf.WriteRkg(data)
+	if err != nil {
+		fmt.Println("register write pkg err ", err)
+	}
+
+	mes, err = tf.ReadPkg()
+
+	if err != nil {
+		fmt.Println("register read pkg err ", err)
+		return
+	}
+
+	// 将mess反序列化为LoginRes
+	var registerResMes message.RegisterResMes
+	err = json.Unmarshal([]byte(mes.Data), &registerResMes)
+	if registerResMes.Code == 200 {
+		fmt.Println("注册成功，你可以登陆了。")
+	}else{
+		fmt.Println(registerResMes.Error)
+	}
+	return
 }

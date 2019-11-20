@@ -9,6 +9,7 @@ import (
 var (
 	UserId int
 	UserPassword string
+	UserName string
 )
 
 func main() {
@@ -39,10 +40,19 @@ func main() {
 				up := &process.UserProcess{
 
 				}
-				up.Login(UserId, UserPassword)
-				loop = false
+				_ = up.Login(UserId, UserPassword)
 			case 2: 
 				fmt.Println("注册用户")
+				fmt.Println("请输入用户id")
+				fmt.Scanf("%d\n", &UserId)
+				fmt.Println("请输入用户密码")
+				fmt.Scanf("%s\n", &UserPassword)
+				fmt.Println("请输入用户名")
+				fmt.Scanf("%s\n", &UserName)
+
+				// 2.调用UserProcess的实例
+				up := &process.UserProcess{}
+				_ = up.Register(UserId, UserPassword, UserName)
 				loop = false
 			case 3: 
 				fmt.Println("退出系统")
