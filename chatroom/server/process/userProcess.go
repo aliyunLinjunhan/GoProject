@@ -12,7 +12,7 @@ import (
 type UserProcess struct {
 	// 字段?
 	Conn net.Conn
-
+	UserId int  // 表示该链接对应的用户
 }
 
 // 编写一个ServerProcessLogin函数，专门处理登陆请求
@@ -49,6 +49,14 @@ func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 		//测试成功
 	} else {
 		LoginResMes.Code = 200
+		// 将登陆成功的用户放入userMgr中
+		// 将登陆成功的id放入user
+		this.UserId = loginMes.UserId
+		userMgr.AddOnlineUser(this)
+		// 将当前登陆成功的id放到res
+		for id, _ := range userMgr.onlineUsers {
+			LoginResMes.UserIds = append(LoginResMes.UserIds, id)
+		}
 		fmt.Println(user, "登陆成功")
 	}
 
