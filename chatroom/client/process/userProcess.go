@@ -69,7 +69,17 @@ func (this *UserProcess) Login(userId int, userPwd string) (err error) {
 		// 显示当前在线列表
 		fmt.Println("当前在线的用户id")
 		for _, v := range loginResMes.UserIds {
+			// 显示自己
+			if v == userId {
+				continue
+			}
 			fmt.Println("用户id:\t", v)
+			// 完成客户端的初始化
+			user := &message.User{
+				UserId: v,
+				UserStatus: message.UserOnline,
+			}
+			onlineUsers[v] = user
 		}
 		fmt.Print("\n\n")
 		// 这里启动一个协程
