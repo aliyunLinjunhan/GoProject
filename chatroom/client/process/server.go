@@ -59,7 +59,8 @@ func serverProcessMes(conn net.Conn) {
 			// 2. 把这个用户的消息，状态保存到客户Map中
 				updateUserStatus(&notifyUserStatusMes)
 			// 处理
-
+			case message.SmsMesType:
+				outputGroupMes(&mes)
 
 			default: fmt.Println("服务器返回未知的消息")
 		}
