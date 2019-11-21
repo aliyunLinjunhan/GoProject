@@ -16,6 +16,8 @@ type Processor struct {
 // 编写ServerProcessMes 函数根据不同的消息种类，决定调用那个函数
 func (this *Processor) ServerProcessMes(mes *message.Message) (err error) {
 
+	fmt.Println("读到对方发送的包..", mes.Data)
+
 	switch mes.Type {
 		case message.LoginMesType:
 			// 处理登陆逻辑

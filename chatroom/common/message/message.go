@@ -6,6 +6,7 @@ const (
 	RegisterMesType = "RegisterMes"
 	RegisterResMesType = "RegisterResMes"
 	NotifyUserStatusMesType = "NotifyUserStatusMes"
+	SmsMesType = "SmsMes"
 )
 
 // 定义几个用户状态常量
@@ -53,4 +54,11 @@ type NotifyUserStatusMes struct {
 
 	UserId int `json:"userId"`
 	Status int `json:"status"`
+}
+
+// 增加一个信息消息体
+type SmsMes struct {
+
+	Content string `json:"content"`
+	User // 继承
 }

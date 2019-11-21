@@ -18,6 +18,7 @@ type UserProcess struct {
 // 编写一个ServerProcessLogin函数，专门处理登陆请求
 func (this *UserProcess) ServerProcessLogin(mes *message.Message) (err error) {
 
+
 	// 1. 先从mes中取出mes.Data，并直接反序列化LoginMes
 	var loginMes message.LoginMes
 	err = json.Unmarshal([]byte(mes.Data), &loginMes)
